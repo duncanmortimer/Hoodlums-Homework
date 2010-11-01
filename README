@@ -1,0 +1,17 @@
+Homework code for the "Hoodlums" London Haskell Meetup group
+
+201010_Parser:
+ - Task: Implement a parser for a simple expression tree.
+ - Contents:
+   - Expressions.hs:
+       The expression tree implementation, some demonstration catamorphisms,
+       and the concrete parser, using combinators from Parser.hs.
+   - Parser.hs:
+       A parser combinator library implementation, based on code from the 
+       October Hoodlums meeting and from the 1998 paper "Monadic parsing in 
+       Haskell" by Hutton and Meijer.
+   - main.hs:
+       A simple program to test the above; takes a string from the user and
+       attempts to parse, doing some simple error checking.
+       - compile with ghc --make main
+
