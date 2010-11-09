@@ -4,14 +4,22 @@ Homework code for the "Hoodlums" London Haskell Meetup group
  - Task: Implement a parser for a simple expression tree.
  - Contents:
    - Expressions.hs:
-       The expression tree implementation, some demonstration catamorphisms,
-       and the concrete parser, using combinators from Parser.hs.
-   - Parser.hs:
-       A parser combinator library implementation, based on code from the 
-       October Hoodlums meeting and from the 1998 paper "Monadic parsing in 
-       Haskell" by Hutton and Meijer.
+       The expression tree implementation, some demonstration catamorphisms.
+   - MonadicParser.hs:
+       A parser combinator library implementation, using a monadic style.  
+       Based on code from the October Hoodlums meeting and from the 1998 paper 
+       "Monadic parsing in Haskell" by Hutton and Meijer.  Running a parser
+       returns a list of possible results; an empty list indicates an error.
+   - ApplicativeParser.hs:
+       A parser combinator library implementation, using an applicative style.
+       NB: uses a different parser model than MonadicParser.hs --- returns an
+       "Either", with left indicating an error (Left (err, remaining string)), 
+       right indicating a successful parse (Right (result, remaining string)).
+   - MonadicExpressionParser.hs, ApplicativeExpressionParser.hs:
+       Parsers for the expression language in "Expressions.hs", using the
+       Monadic or Applicative style.
    - main.hs:
        A simple program to test the above; takes a string from the user and
-       attempts to parse, doing some simple error checking.
+       attempts to parse using the monadic and applicative parsers, doing some 
+       simple error checking.
        - compile with ghc --make main
-

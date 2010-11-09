@@ -1,14 +1,14 @@
 -- Partly based on "Monadic Parsing in Haskell" by Hutton and Meijer, 1998
-module Parser ( Parser (..)
-              , fmap
+module MonadicParser ( Parser (..)
+              , fmap, (<$>)
               , return, (>>=)
               , pure, (<*>)
               , empty, (<|>)
               , (<||>), multiple, multiple1
               , chainl, chainr
-              , sat, anyof
-              , itemP, dictP, charP, stringP
-              , space, dropTrailingSpace 
+              , sat, anyof, dict
+              , item, char, string
+              , dropTrailingSpace 
               ) where
 
 import Control.Applicative
@@ -25,7 +25,7 @@ instance Functor Parser where
 instance Monad Parser where
     return x = Parser $ \s -> [(x, s)]
     p >>= f = Parser $ \s -> concat [parse (f x) s' | (x, s') <- parse p s]
-    
+
 instance Applicative Parser where
     pure = return
     pf <*> pa = do {
@@ -94,35 +94,35 @@ sat pred p = do {
 anyof :: [Parser a] -> Parser a
 anyof = foldl (<||>) empty
 
--- itemP: parses any character and returns it as the result.
-itemP :: Parser Char
-itemP = Parser $ \s -> case s of
+-- item: parses any character and returns it as the result.
+item :: Parser Char
+item = Parser $ \s -> case s of
                         (c:cs) -> [(c, cs)]
                         _ -> []
 
--- charP x: accepts only x, and returns it as the result.
-charP :: Char -> Parser Char
-charP x = sat (==x) itemP
+-- char x: accepts only x, and returns it as the result.
+char :: Char -> Parser Char
+char x = sat (==x) item
 
--- dictP dict p: parses using p, then uses the result to look up a return value in dict.
-dictP :: (Eq a) => [(a, b)] -> Parser a -> Parser b
-dictP dict pa = do {
+-- dict dict p: parses using p, then uses the result to look up a return value in dict.
+dict :: (Eq a) => [(a, b)] -> Parser a -> Parser b
+dict dict pa = do {
                   a <- pa;
                   (maybe empty return $ lookup a dict)
                 }
 
--- stringP s: succeeds if the head of the input matches the s, and returns s.
-stringP :: String -> Parser String
-stringP "" = return ""
-stringP (c:cs) = do {
-                   charP c;
-                   stringP cs;
+-- string s: succeeds if the head of the input matches the s, and returns s.
+string :: String -> Parser String
+string "" = return ""
+string (c:cs) = do {
+                   char c;
+                   string cs;
                    return (c:cs)
                  }
 
 -- space: parses any spaces, and returns as a string.
 space :: Parser String
-space = (multiple $ sat isSpace itemP)
+space = (multiple $ sat isSpace item)
 
 -- dropTrailingSpace p: parse using p, then drop any trailing spaces in the input and return the result of p.
 dropTrailingSpace :: Parser a -> Parser a
